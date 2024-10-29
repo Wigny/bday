@@ -15,5 +15,6 @@ defmodule QuWeb.Router do
 
     get "/", PageController, :home
     live "/enqueue", EnqueueLive
+    live "/list", ListLive
   end
 end
