@@ -5,7 +5,13 @@ defmodule QuWeb.UserLiveAuth do
   import Phoenix.LiveView
 
   def on_mount(:ensure_admin, _params, _session, socket) do
-    {:cont, socket}
+    peer_data = get_connect_info(socket, :peer_data)
+
+    if match?({127, 0, 0, 1}, peer_data.address) do
+      {:cont, socket}
+    else
+      {:halt, redirect(socket, to: ~p"/")}
+    end
   end
 
   def on_mount(:ensure_authenticated, _params, %{"username" => username}, socket) do
