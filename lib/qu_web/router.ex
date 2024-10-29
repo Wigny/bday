@@ -10,18 +10,10 @@ defmodule QuWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
-
   scope "/", QuWeb do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/enqueue", EnqueueLive
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", QuWeb do
-  #   pipe_through :api
-  # end
 end

@@ -9,6 +9,10 @@ defmodule Qu.Queue do
     Agent.update(__MODULE__, &:queue.in(item, &1))
   end
 
+  def member?(item) do
+    Agent.get(__MODULE__, &:queue.member(item, &1))
+  end
+
   def pop do
     Agent.get_and_update(__MODULE__, fn queue ->
       case :queue.out(queue) do
