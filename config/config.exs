@@ -22,13 +22,17 @@ config :qu, QuWeb.Endpoint,
   live_view: [signing_salt: "8RXSOksQ"]
 
 # Configure esbuild (the version is required)
-config :esbuild,
-  version: "0.17.11",
+config :bun,
+  version: "1.1.33",
   qu: [
-    args:
-      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+    args: ~w(
+      build js/app.js
+        --outdir=../priv/static/assets
+        --external /fonts/*
+        --external /images/*
+    ),
     cd: Path.expand("../assets", __DIR__),
-    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+    env: %{}
   ]
 
 # Configure tailwind (the version is required)

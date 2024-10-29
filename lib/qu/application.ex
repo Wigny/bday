@@ -8,8 +8,6 @@ defmodule Qu.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      QuWeb.Telemetry,
-      {DNSCluster, query: Application.get_env(:qu, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Qu.PubSub},
       # Start a worker by calling: Qu.Worker.start_link(arg)
       # {Qu.Worker, arg},

@@ -15,7 +15,7 @@ config :qu, QuWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "SpL5MMBnxoYqfe1cBZetBDwAW1epjLByEtoC+mkVyN3If3xxHThxGXYoN+78ff8K",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:qu, ~w(--sourcemap=inline --watch)]},
+    bun: {Bun, :install_and_run, [:qu, ~w(--sourcemap=inline --watch)]},
     tailwind: {Tailwind, :install_and_run, [:qu, ~w(--watch)]}
   ]
 
