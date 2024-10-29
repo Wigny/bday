@@ -9,6 +9,7 @@ defmodule QuWeb.ListLive do
         <%= name %>
       </p>
     </div>
+    <.button phx-click="next">Next</.button>
     """
   end
 
@@ -25,7 +26,13 @@ defmodule QuWeb.ListLive do
   end
 
   @impl true
-  def handle_info({:push, _item}, socket) do
+  def handle_info(:update, socket) do
     {:noreply, stream(socket, :queue, Qu.Queue.peek(10), reset: true)}
+  end
+
+  @impl true
+  def handle_event("next", _params, socket) do
+    _item = Qu.Queue.pop()
+    {:noreply, socket}
   end
 end

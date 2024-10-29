@@ -7,7 +7,7 @@ defmodule Qu.Queue do
 
   def push(item) do
     with :ok <- Agent.update(__MODULE__, &:queue.in(item, &1)),
-         :ok = Phoenix.PubSub.broadcast(Qu.PubSub, "queue", {:push, item}),
+         :ok = Phoenix.PubSub.broadcast(Qu.PubSub, "queue", :update),
          do: :ok
   end
 
@@ -16,7 +16,10 @@ defmodule Qu.Queue do
   end
 
   def pop do
-    Agent.get_and_update(__MODULE__, &pop/1)
+    item = Agent.get_and_update(__MODULE__, &pop/1)
+    Phoenix.PubSub.broadcast!(Qu.PubSub, "queue", :update)
+
+    item
   end
 
   def peek(n) do
