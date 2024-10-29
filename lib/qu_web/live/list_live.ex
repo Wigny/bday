@@ -1,12 +1,14 @@
 defmodule QuWeb.ListLive do
   use QuWeb, :live_view
 
+  on_mount {QuWeb.UserLiveAuth, :ensure_admin}
+
   @impl true
   def render(assigns) do
     ~H"""
     <div id="queue" phx-update="stream">
-      <p :for={{item_id, name} <- @streams.queue} id={item_id}>
-        <%= name %>
+      <p :for={{item_id, user} <- @streams.queue} id={item_id}>
+        <%= user.name %>
       </p>
     </div>
     <.button phx-click="next">Next</.button>
@@ -21,7 +23,7 @@ defmodule QuWeb.ListLive do
 
     {:ok,
      socket
-     |> stream_configure(:queue, dom_id: &"name-#{&1}")
+     |> stream_configure(:queue, dom_id: &"name-#{&1.name}")
      |> stream(:queue, Qu.Queue.peek(10))}
   end
 

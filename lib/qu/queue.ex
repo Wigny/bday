@@ -11,8 +11,19 @@ defmodule Qu.Queue do
          do: :ok
   end
 
+  def delete(item) do
+    Agent.update(__MODULE__, &:queue.delete(item, &1))
+    Phoenix.PubSub.broadcast!(Qu.PubSub, "queue", :update)
+
+    :ok
+  end
+
   def member?(item) do
     Agent.get(__MODULE__, &:queue.member(item, &1))
+  end
+
+  def index(item) do
+    Agent.get(__MODULE__, &index(&1, item))
   end
 
   def pop do
@@ -35,7 +46,17 @@ defmodule Qu.Queue do
 
   defp peek(queue, n) do
     queue
-    |> Stream.unfold(&with({nil, _q} <- pop(&1), do: nil))
+    |> to_stream()
     |> Enum.take(n)
+  end
+
+  defp index(queue, item) do
+    queue
+    |> to_stream()
+    |> Enum.find_index(&(&1 == item))
+  end
+
+  defp to_stream(queue) do
+    Stream.unfold(queue, &with({nil, _queue} <- pop(&1), do: nil))
   end
 end

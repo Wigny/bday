@@ -1,71 +1,41 @@
 defmodule QuWeb.EnqueueLive do
   use QuWeb, :live_view
 
-  defmodule Data do
-    use Ecto.Schema
-    import Ecto.Changeset
-
-    @primary_key false
-    embedded_schema do
-      field :name, :string
-    end
-
-    def changeset(data \\ %__MODULE__{}, attrs) do
-      data
-      |> cast(attrs, [:name])
-      |> validate_required([:name])
-      |> validate_change(:name, fn :name, name ->
-        if Qu.Queue.member?(name) do
-          [name: "already enqueued"]
-        else
-          []
-        end
-      end)
-    end
-
-    def save(changeset) do
-      with {:ok, data} <- apply_action(changeset, :insert),
-           :ok <- Qu.Queue.push(data.name),
-           do: {:ok, data}
-    end
-  end
+  on_mount {QuWeb.UserLiveAuth, :ensure_authenticated}
 
   @impl true
   def render(assigns) do
     ~H"""
-    <.simple_form for={@form} phx-change="validate" phx-submit="save">
-      <.input type="text" field={@form[:name]} label="Name" phx-debounce />
-
-      <:actions>
-        <.button phx-disable-with="Saving...">Submit</.button>
-      </:actions>
-    </.simple_form>
+    <span :if={is_nil(@position)}>
+      <.button phx-click="join_list">Join list</.button>
+    </span>
+    <span :if={@position}>
+      You are the in the <%= @position + 1 %>º position
+    </span>
     """
   end
 
   @impl true
   def mount(_params, _session, socket) do
-    data = %Data{}
-    changeset = Data.changeset(data, %{})
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Qu.PubSub, "queue")
+    end
 
-    {:ok,
-     socket
-     |> assign(:data, data)
-     |> assign(:form, to_form(changeset))}
+    {:ok, assign_position(socket)}
   end
 
   @impl true
-  def handle_event("validate", %{"data" => data_params}, socket) do
-    changeset = Data.changeset(socket.assigns.data, data_params)
-    {:noreply, assign(socket, :form, to_form(%{changeset | action: :validate}))}
+  def handle_event("join_list", _params, socket) do
+    :ok = Qu.Queue.push(socket.assigns.current_user)
+    {:noreply, assign_position(socket)}
   end
 
-  def handle_event("save", %{"data" => data_params}, socket) do
-    changeset = Data.changeset(socket.assigns.data, data_params)
+  @impl true
+  def handle_info(:update, socket) do
+    {:noreply, assign_position(socket)}
+  end
 
-    case Data.save(changeset) do
-      {:ok, _data} -> {:noreply, put_flash(socket, :info, "User enqueued")}
-      {:error, changeset} -> {:noreply, assign(socket, :form, to_form(changeset))}
-    end
+  defp assign_position(socket) do
+    assign(socket, :position, Qu.Queue.index(socket.assigns.current_user))
   end
 end
