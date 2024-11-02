@@ -1,62 +1,91 @@
 defmodule Qu.Queue do
   use Agent
 
+  defmodule Q do
+    defstruct value: :queue.new()
+
+    def new do
+      %__MODULE__{}
+    end
+
+    def to_list(%__MODULE__{value: q}) do
+      :queue.to_list(q)
+    end
+
+    def member?(%__MODULE__{value: q}, item) do
+      :queue.member(item, q)
+    end
+
+    def length(%__MODULE__{value: q}) do
+      :queue.len(q)
+    end
+
+    def push(%__MODULE__{value: q} = queue, item) do
+      %{queue | value: :queue.in(item, q)}
+    end
+
+    def pop(%__MODULE__{value: q} = queue) do
+      {result, q} = :queue.out(q)
+      {result, %{queue | value: q}}
+    end
+
+    defimpl Enumerable do
+      def member?(queue, element) do
+        {:ok, @for.member?(queue, element)}
+      end
+
+      def count(queue) do
+        {:ok, @for.length(queue)}
+      end
+
+      def reduce(_queue, {:halt, acc}, _fun) do
+        {:halted, acc}
+      end
+
+      def reduce(queue, {:suspend, acc}, fun) do
+        {:suspended, acc, &reduce(queue, &1, fun)}
+      end
+
+      def reduce(queue, {:cont, acc}, fun) do
+        case @for.pop(queue) do
+          {{:value, item}, queue} -> reduce(queue, fun.(item, acc), fun)
+          {:empty, _queue} -> {:done, acc}
+        end
+      end
+
+      def slice(queue) do
+        {:ok, @for.length(queue), &@for.to_list/1}
+      end
+    end
+  end
+
   def start_link(_args \\ []) do
-    Agent.start_link(fn -> :queue.new() end, name: __MODULE__)
+    Agent.start_link(fn -> Q.new() end, name: __MODULE__)
   end
 
-  def push(item) do
-    with :ok <- Agent.update(__MODULE__, &:queue.in(item, &1)),
-         :ok = Phoenix.PubSub.broadcast(Qu.PubSub, "queue", :update),
-         do: :ok
+  def get do
+    Agent.get(__MODULE__, & &1)
   end
 
-  def delete(item) do
-    Agent.update(__MODULE__, &:queue.delete(item, &1))
-    Phoenix.PubSub.broadcast!(Qu.PubSub, "queue", :update)
+  def member?(user) do
+    Agent.get(__MODULE__, &Q.member?(&1, user))
+  end
+
+  def push(user) do
+    Agent.update(__MODULE__, &Q.push(&1, user))
+    notify_change()
 
     :ok
   end
 
-  def member?(item) do
-    Agent.get(__MODULE__, &:queue.member(item, &1))
-  end
-
-  def index(item) do
-    Agent.get(__MODULE__, &index(&1, item))
-  end
-
   def pop do
-    item = Agent.get_and_update(__MODULE__, &pop/1)
-    Phoenix.PubSub.broadcast!(Qu.PubSub, "queue", :update)
+    {:value, user} = Agent.get_and_update(__MODULE__, &Q.pop/1)
+    notify_change()
 
-    item
+    user
   end
 
-  def peek(n) do
-    Agent.get(__MODULE__, &peek(&1, n))
-  end
-
-  defp pop(queue) do
-    case :queue.out(queue) do
-      {{:value, item}, queue} -> {item, queue}
-      {:empty, queue} -> {nil, queue}
-    end
-  end
-
-  defp peek(queue, n) do
-    queue
-    |> to_stream()
-    |> Enum.take(n)
-  end
-
-  defp index(queue, item) do
-    queue
-    |> to_stream()
-    |> Enum.find_index(&(&1 == item))
-  end
-
-  defp to_stream(queue) do
-    Stream.unfold(queue, &with({nil, _queue} <- pop(&1), do: nil))
+  defp notify_change do
+    Phoenix.PubSub.broadcast!(Qu.PubSub, "queue", {:change, get()})
   end
 end

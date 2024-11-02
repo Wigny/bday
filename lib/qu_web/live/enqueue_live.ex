@@ -6,6 +6,12 @@ defmodule QuWeb.EnqueueLive do
   @impl true
   def render(assigns) do
     ~H"""
+    <div id="queue" phx-update="stream">
+      <p :for={{item_id, user} <- @streams.queue} id={item_id}>
+        <%= user.name %>
+      </p>
+    </div>
+
     <span :if={is_nil(@position)}>
       <.button phx-click="join_list">Join list</.button>
     </span>
@@ -21,21 +27,27 @@ defmodule QuWeb.EnqueueLive do
       Phoenix.PubSub.subscribe(Qu.PubSub, "queue")
     end
 
-    {:ok, assign_position(socket)}
+    {:ok,
+     socket
+     |> stream_configure(:queue, dom_id: &"user-#{&1.name}")
+     |> update_queue(Qu.Queue.get())}
   end
 
   @impl true
   def handle_event("join_list", _params, socket) do
-    :ok = Qu.Queue.push(socket.assigns.current_user)
-    {:noreply, assign_position(socket)}
+    user = socket.assigns.current_user
+    Qu.Queue.push(user)
+    {:noreply, stream_insert(socket, :queue, user, limit: -10)}
   end
 
   @impl true
-  def handle_info(:update, socket) do
-    {:noreply, assign_position(socket)}
+  def handle_info({:change, queue}, socket) do
+    {:noreply, update_queue(socket, queue)}
   end
 
-  defp assign_position(socket) do
-    assign(socket, :position, Qu.Queue.index(socket.assigns.current_user))
+  defp update_queue(socket, queue) do
+    socket
+    |> stream(:queue, Enum.take(queue, 10), reset: true)
+    |> assign(:position, Enum.find_index(queue, &(&1 == socket.assigns.current_user)))
   end
 end

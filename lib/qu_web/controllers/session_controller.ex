@@ -4,7 +4,7 @@ defmodule QuWeb.SessionController do
   plug :redirect_if_logged
 
   def new(conn, _params) do
-    render(conn, :new, error_message: nil)
+    render(conn, :new)
   end
 
   def create(conn, %{"user" => %{"name" => username}}) do

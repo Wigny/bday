@@ -23,18 +23,22 @@ defmodule QuWeb.ListLive do
 
     {:ok,
      socket
-     |> stream_configure(:queue, dom_id: &"name-#{&1.name}")
-     |> stream(:queue, Qu.Queue.peek(10))}
+     |> stream_configure(:queue, dom_id: &"user-#{&1.name}")
+     |> assing_queue(Qu.Queue.get())}
   end
 
   @impl true
-  def handle_info(:update, socket) do
-    {:noreply, stream(socket, :queue, Qu.Queue.peek(10), reset: true)}
+  def handle_info({:change, queue}, socket) do
+    {:noreply, assing_queue(socket, queue)}
+  end
+
+  defp assing_queue(socket, queue) do
+    stream(socket, :queue, queue, reset: true)
   end
 
   @impl true
   def handle_event("next", _params, socket) do
-    _item = Qu.Queue.pop()
+    Qu.Queue.pop()
     {:noreply, socket}
   end
 end
