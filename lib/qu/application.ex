@@ -7,7 +7,7 @@ defmodule Qu.Application do
   def start(_type, _args) do
     children = [
       {Phoenix.PubSub, name: Qu.PubSub},
-      Qu.Queue,
+      Qu.QueueState,
       QuWeb.Endpoint
     ]
 

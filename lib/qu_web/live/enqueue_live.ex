@@ -30,13 +30,13 @@ defmodule QuWeb.EnqueueLive do
     {:ok,
      socket
      |> stream_configure(:queue, dom_id: &"user-#{&1.name}")
-     |> update_queue(Qu.Queue.get())}
+     |> update_queue(Qu.QueueState.get())}
   end
 
   @impl true
   def handle_event("join_list", _params, socket) do
     user = socket.assigns.current_user
-    Qu.Queue.push(user)
+    Qu.QueueState.push(user)
     {:noreply, stream_insert(socket, :queue, user, limit: -10)}
   end
 
