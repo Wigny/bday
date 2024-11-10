@@ -16,7 +16,10 @@ const config = {
     extend: {
       colors: {
         brand: "#FD4F00",
-      }
+      },
+      fontFamily: {
+        shark: ["Shark Soft Bites"],
+      },
     },
   },
   plugins: [
