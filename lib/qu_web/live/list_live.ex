@@ -6,11 +6,11 @@ defmodule QuWeb.ListLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id="queue" phx-update="stream">
-      <p :for={{item_id, user} <- @streams.queue} id={item_id}>
+    <ul id="queue" phx-update="stream">
+      <li :for={{item_id, user} <- @streams.queue} id={item_id}>
         <%= user.name %>
-      </p>
-    </div>
+      </li>
+    </ul>
     <.button phx-click="next">Next</.button>
     """
   end
@@ -24,15 +24,15 @@ defmodule QuWeb.ListLive do
     {:ok,
      socket
      |> stream_configure(:queue, dom_id: &"user-#{&1.name}")
-     |> assing_queue(Qu.QueueState.get())}
+     |> assign_queue(Qu.QueueState.get())}
   end
 
   @impl true
   def handle_info({:change, queue}, socket) do
-    {:noreply, assing_queue(socket, queue)}
+    {:noreply, assign_queue(socket, queue)}
   end
 
-  defp assing_queue(socket, queue) do
+  defp assign_queue(socket, queue) do
     stream(socket, :queue, queue, reset: true)
   end
 

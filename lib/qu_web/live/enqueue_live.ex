@@ -6,11 +6,11 @@ defmodule QuWeb.EnqueueLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id="queue" phx-update="stream">
-      <p :for={{item_id, user} <- @streams.queue} id={item_id}>
+    <ul id="queue" phx-update="stream">
+      <li :for={{item_id, user} <- @streams.queue} id={item_id}>
         <%= user.name %>
-      </p>
-    </div>
+      </li>
+    </ul>
 
     <span :if={is_nil(@position)}>
       <.button phx-click="join_list">Join list</.button>
