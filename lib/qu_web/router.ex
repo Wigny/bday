@@ -13,6 +13,7 @@ defmodule QuWeb.Router do
   scope "/", QuWeb do
     pipe_through :browser
 
+    get "/home", HomeController, :index
     resources "/session", SessionController, only: [:new, :create], singleton: true
     live "/list", ListLive
     live "/", EnqueueLive

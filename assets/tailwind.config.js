@@ -15,7 +15,8 @@ const config = {
   theme: {
     extend: {
       colors: {
-        brand: "#FD4F00",
+        brand: "#DE6693",
+        secondary: "#693045"
       },
       fontFamily: {
         shark: ["Shark Soft Bites"],
