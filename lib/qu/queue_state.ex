@@ -10,22 +10,26 @@ defmodule Qu.QueueState do
     Agent.get(__MODULE__, & &1)
   end
 
-  def member?(user) do
-    Agent.get(__MODULE__, &Queue.member?(&1, user))
+  def member?(item) do
+    Agent.get(__MODULE__, &Queue.member?(&1, item))
   end
 
-  def push(user) do
-    Agent.update(__MODULE__, &Queue.push(&1, user))
+  def push(item) do
+    :ok = Agent.update(__MODULE__, &Queue.push(&1, item))
     notify_change()
 
     :ok
   end
 
   def pop do
-    {:value, user} = Agent.get_and_update(__MODULE__, &Queue.pop/1)
+    {:value, item} = Agent.get_and_update(__MODULE__, &Queue.pop/1)
     notify_change()
 
-    user
+    item
+  end
+
+  def position(item) do
+    Agent.get(__MODULE__, fn queue -> Enum.find_index(queue, &(&1 == item)) end)
   end
 
   defp notify_change do

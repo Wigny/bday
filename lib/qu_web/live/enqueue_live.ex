@@ -6,18 +6,40 @@ defmodule QuWeb.EnqueueLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <ul id="queue" phx-update="stream">
-      <li :for={{item_id, user} <- @streams.queue} id={item_id}>
-        <%= user.name %>
+    <h1 class="font-shark text-6xl text-[#693045]">Fila de espera</h1>
+
+    <ul id="queue" phx-update="stream" class="grid grid-cols-1 gap-y-5 pb-40">
+      <li :for={{dom_id, user} <- @streams.queue} id={dom_id}>
+        <.guest_card
+          nickname={user.name}
+          index={Qu.QueueState.position(user) + 1}
+          is_my={Qu.QueueState.position(user) == @position}
+        />
       </li>
     </ul>
 
-    <span :if={is_nil(@position)}>
+    <div :if={is_nil(@position)} class="fixed bottom-0 left-0 bg-white w-full p-4 grid grid-cols-1">
       <.button phx-click="join_list">Join list</.button>
-    </span>
-    <span :if={@position}>
+    </div>
+    <%!-- <span :if={@position}>
       You are the in the <%= @position + 1 %>º position
-    </span>
+    </span> --%>
+
+    <img
+      src={~p"/images/bandeirolas-rosinha.svg"}
+      alt=""
+      class="absolute -top-10 -right-5  w-3/4 blur-sm -z-10"
+    />
+    <img
+      src={~p"/images/bandeirolas-roxa.svg"}
+      alt=""
+      class="absolute top-32 -left-10  w-3/4 blur-sm -z-10"
+    />
+    <img
+      src={~p"/images/bandeirolas-rosinha.svg"}
+      alt=""
+      class="absolute top-2/3 -right-5 -left-0 blur-sm -z-10"
+    />
     """
   end
 

@@ -400,6 +400,21 @@ defmodule QuWeb.CoreComponents do
     """
   end
 
+  def guest_card(assigns) do
+    ~H"""
+    <div
+      class="rounded-xl bg-[#693045] p-4 aria-[current=true]:ring-[#693045] aria-[current=true]:ring-2 aria-[current=true]:ring-offset-2"
+      aria-current={to_string(@is_my)}
+    >
+      <h3 class="text-white text-6xl font-shark -translate-y-4"><%= @nickname %></h3>
+      <p class="text-white text-xl font-shark flex flex-row justify-between">
+        <span>POSIÇÃO</span>
+        <span class="text-[#DE6693] text-4xl"><%= @index %></span>
+      </p>
+    </div>
+    """
+  end
+
   @doc """
   Generates a generic error message.
   """
