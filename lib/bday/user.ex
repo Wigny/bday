@@ -1,4 +1,4 @@
-defmodule Qu.User do
+defmodule Bday.User do
   defstruct ~w[name]a
 
   def new(username) do

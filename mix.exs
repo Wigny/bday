@@ -1,9 +1,9 @@
-defmodule Qu.MixProject do
+defmodule Bday.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :qu,
+      app: :bday,
       version: "0.1.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -15,7 +15,7 @@ defmodule Qu.MixProject do
 
   def application do
     [
-      mod: {Qu.Application, []},
+      mod: {Bday.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
@@ -47,8 +47,8 @@ defmodule Qu.MixProject do
         "bun.install --if-missing",
         "bun default install --cwd assets"
       ],
-      "assets.build": ["tailwind qu", "bun qu"],
-      "assets.deploy": ["tailwind qu --minify", "bun qu --minify", "phx.digest"]
+      "assets.build": ["tailwind bday", "bun bday"],
+      "assets.deploy": ["tailwind bday --minify", "bun bday --minify", "phx.digest"]
     ]
   end
 end

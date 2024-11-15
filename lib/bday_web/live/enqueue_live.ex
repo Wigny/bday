@@ -1,7 +1,7 @@
-defmodule QuWeb.EnqueueLive do
-  use QuWeb, :live_view
+defmodule BdayWeb.EnqueueLive do
+  use BdayWeb, :live_view
 
-  on_mount {QuWeb.UserLiveAuth, :ensure_authenticated}
+  on_mount {BdayWeb.UserLiveAuth, :ensure_authenticated}
 
   @impl true
   def render(assigns) do
@@ -12,8 +12,8 @@ defmodule QuWeb.EnqueueLive do
       <li :for={{dom_id, user} <- @streams.queue} id={dom_id}>
         <.guest_card
           nickname={user.name}
-          index={Qu.QueueState.position(user) + 1}
-          is_my={Qu.QueueState.position(user) == @position}
+          index={Bday.QueueState.position(user) + 1}
+          is_my={Bday.QueueState.position(user) == @position}
         />
       </li>
     </ul>
@@ -46,19 +46,19 @@ defmodule QuWeb.EnqueueLive do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      Phoenix.PubSub.subscribe(Qu.PubSub, "queue")
+      Phoenix.PubSub.subscribe(Bday.PubSub, "queue")
     end
 
     {:ok,
      socket
      |> stream_configure(:queue, dom_id: &"user-#{&1.name}")
-     |> update_queue(Qu.QueueState.get())}
+     |> update_queue(Bday.QueueState.get())}
   end
 
   @impl true
   def handle_event("join_list", _params, socket) do
     user = socket.assigns.current_user
-    Qu.QueueState.push(user)
+    Bday.QueueState.push(user)
     {:noreply, stream_insert(socket, :queue, user, limit: -10)}
   end
 

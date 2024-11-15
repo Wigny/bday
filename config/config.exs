@@ -7,24 +7,24 @@
 # General application configuration
 import Config
 
-config :qu,
+config :bday,
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
-config :qu, QuWeb.Endpoint,
+config :bday, BdayWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [html: QuWeb.ErrorHTML, json: QuWeb.ErrorJSON],
+    formats: [html: BdayWeb.ErrorHTML, json: BdayWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Qu.PubSub,
+  pubsub_server: Bday.PubSub,
   live_view: [signing_salt: "8RXSOksQ"]
 
 # Configure esbuild (the version is required)
 config :bun,
   version: "1.1.33",
-  qu: [
+  bday: [
     args: ~w(
       build js/app.js
         --outdir=../priv/static/assets
@@ -38,7 +38,7 @@ config :bun,
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "3.4.3",
-  qu: [
+  bday: [
     args: ~w(
       --config=tailwind.config.js
       --input=css/app.css

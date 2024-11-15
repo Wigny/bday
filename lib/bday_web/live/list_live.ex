@@ -1,7 +1,7 @@
-defmodule QuWeb.ListLive do
-  use QuWeb, :live_view
+defmodule BdayWeb.ListLive do
+  use BdayWeb, :live_view
 
-  on_mount {QuWeb.UserLiveAuth, :ensure_admin}
+  on_mount {BdayWeb.UserLiveAuth, :ensure_admin}
 
   @impl true
   def render(assigns) do
@@ -18,13 +18,13 @@ defmodule QuWeb.ListLive do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      Phoenix.PubSub.subscribe(Qu.PubSub, "queue")
+      Phoenix.PubSub.subscribe(Bday.PubSub, "queue")
     end
 
     {:ok,
      socket
      |> stream_configure(:queue, dom_id: &"user-#{&1.name}")
-     |> assign_queue(Qu.QueueState.get())}
+     |> assign_queue(Bday.QueueState.get())}
   end
 
   @impl true
@@ -38,7 +38,7 @@ defmodule QuWeb.ListLive do
 
   @impl true
   def handle_event("next", _params, socket) do
-    Qu.QueueState.pop()
+    Bday.QueueState.pop()
     {:noreply, socket}
   end
 end

@@ -1,6 +1,6 @@
-defmodule Qu.QueueState do
+defmodule Bday.QueueState do
   use Agent
-  alias Qu.Queue
+  alias Bday.Queue
 
   def start_link(_args \\ []) do
     Agent.start_link(fn -> Queue.new() end, name: __MODULE__)
@@ -33,6 +33,6 @@ defmodule Qu.QueueState do
   end
 
   defp notify_change do
-    Phoenix.PubSub.broadcast!(Qu.PubSub, "queue", {:change, get()})
+    Phoenix.PubSub.broadcast!(Bday.PubSub, "queue", {:change, get()})
   end
 end

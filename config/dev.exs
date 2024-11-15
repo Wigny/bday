@@ -6,7 +6,7 @@ import Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-config :qu, QuWeb.Endpoint,
+config :bday, BdayWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {0, 0, 0, 0}, port: 4000],
@@ -15,8 +15,8 @@ config :qu, QuWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "SpL5MMBnxoYqfe1cBZetBDwAW1epjLByEtoC+mkVyN3If3xxHThxGXYoN+78ff8K",
   watchers: [
-    bun: {Bun, :install_and_run, [:qu, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:qu, ~w(--watch)]}
+    bun: {Bun, :install_and_run, [:bday, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:bday, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -43,16 +43,16 @@ config :qu, QuWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :qu, QuWeb.Endpoint,
+config :bday, BdayWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
-      ~r"lib/qu_web/(controllers|live|components)/.*(ex|heex)$"
+      ~r"lib/bday_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :qu, dev_routes: true
+config :bday, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

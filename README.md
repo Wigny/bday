@@ -1,4 +1,4 @@
-# Qu
+# Bday
 
 To start your Phoenix server:
 

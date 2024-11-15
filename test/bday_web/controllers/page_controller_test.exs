@@ -1,5 +1,5 @@
-defmodule QuWeb.PageControllerTest do
-  use QuWeb.ConnCase
+defmodule BdayWeb.PageControllerTest do
+  use BdayWeb.ConnCase
 
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")

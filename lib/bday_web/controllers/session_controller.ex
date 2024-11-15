@@ -1,5 +1,5 @@
-defmodule QuWeb.SessionController do
-  use QuWeb, :controller
+defmodule BdayWeb.SessionController do
+  use BdayWeb, :controller
 
   plug :redirect_if_logged
 

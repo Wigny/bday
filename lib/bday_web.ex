@@ -1,12 +1,12 @@
-defmodule QuWeb do
+defmodule BdayWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
   as controllers, components, channels, and so on.
 
   This can be used in your application as:
 
-      use QuWeb, :controller
-      use QuWeb, :html
+      use BdayWeb, :controller
+      use BdayWeb, :html
 
   The definitions below will be executed for every controller,
   component, etc, so keep them short and clean, focused
@@ -40,7 +40,7 @@ defmodule QuWeb do
     quote do
       use Phoenix.Controller,
         formats: [:html, :json],
-        layouts: [html: QuWeb.Layouts]
+        layouts: [html: BdayWeb.Layouts]
 
       import Plug.Conn
 
@@ -51,7 +51,7 @@ defmodule QuWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {QuWeb.Layouts, :app}
+        layout: {BdayWeb.Layouts, :app}
 
       unquote(html_helpers())
     end
@@ -83,7 +83,7 @@ defmodule QuWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import QuWeb.CoreComponents
+      import BdayWeb.CoreComponents
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
@@ -96,9 +96,9 @@ defmodule QuWeb do
   def verified_routes do
     quote do
       use Phoenix.VerifiedRoutes,
-        endpoint: QuWeb.Endpoint,
-        router: QuWeb.Router,
-        statics: QuWeb.static_paths()
+        endpoint: BdayWeb.Endpoint,
+        router: BdayWeb.Router,
+        statics: BdayWeb.static_paths()
     end
   end
 

@@ -9,8 +9,8 @@ import path from "path";
 const config = {
   content: [
     "./js/**/*.js",
-    "../lib/qu_web.ex",
-    "../lib/qu_web/**/*.*ex"
+    "../lib/bday_web.ex",
+    "../lib/bday_web/**/*.*ex"
   ],
   theme: {
     extend: {

@@ -1,5 +1,5 @@
-defmodule QuWeb.HomeHTML do
-  use QuWeb, :html
+defmodule BdayWeb.HomeHTML do
+  use BdayWeb, :html
 
   def index(assigns) do
     ~H"""

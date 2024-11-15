@@ -1,4 +1,4 @@
-defmodule Qu.Queue do
+defmodule Bday.Queue do
   defstruct value: :queue.new()
 
   def new do

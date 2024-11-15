@@ -1,5 +1,5 @@
-defmodule QuWeb.SessionHTML do
-  use QuWeb, :html
+defmodule BdayWeb.SessionHTML do
+  use BdayWeb, :html
 
   def new(assigns) do
     ~H"""

@@ -1,4 +1,4 @@
-defmodule Qu.Application do
+defmodule Bday.Application do
   @moduledoc false
 
   use Application
@@ -6,18 +6,18 @@ defmodule Qu.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Phoenix.PubSub, name: Qu.PubSub},
-      Qu.QueueState,
-      QuWeb.Endpoint
+      {Phoenix.PubSub, name: Bday.PubSub},
+      Bday.QueueState,
+      BdayWeb.Endpoint
     ]
 
-    opts = [strategy: :one_for_one, name: Qu.Supervisor]
+    opts = [strategy: :one_for_one, name: Bday.Supervisor]
     Supervisor.start_link(children, opts)
   end
 
   @impl true
   def config_change(changed, _new, removed) do
-    QuWeb.Endpoint.config_change(changed, removed)
+    BdayWeb.Endpoint.config_change(changed, removed)
     :ok
   end
 end

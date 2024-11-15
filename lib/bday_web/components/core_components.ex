@@ -1,4 +1,4 @@
-defmodule QuWeb.CoreComponents do
+defmodule BdayWeb.CoreComponents do
   @moduledoc """
   Provides core UI components.
 
@@ -667,9 +667,9 @@ defmodule QuWeb.CoreComponents do
     # uncommenting and adjusting the following code:
 
     # if count = opts[:count] do
-    #   Gettext.dngettext(QuWeb.Gettext, "errors", msg, msg, count, opts)
+    #   Gettext.dngettext(BdayWeb.Gettext, "errors", msg, msg, count, opts)
     # else
-    #   Gettext.dgettext(QuWeb.Gettext, "errors", msg, opts)
+    #   Gettext.dgettext(BdayWeb.Gettext, "errors", msg, opts)
     # end
 
     Enum.reduce(opts, msg, fn {key, value}, acc ->

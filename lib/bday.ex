@@ -1,6 +1,6 @@
-defmodule Qu do
+defmodule Bday do
   @moduledoc """
-  Qu keeps the contexts that define your domain
+  Bday keeps the contexts that define your domain
   and business logic.
 
   Contexts are also responsible for managing your data, regardless
