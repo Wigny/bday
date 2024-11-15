@@ -10,6 +10,10 @@ defmodule Bday.QueueState do
     Agent.get(__MODULE__, & &1)
   end
 
+  def length do
+    Agent.get(__MODULE__, &Queue.length/1)
+  end
+
   def member?(item) do
     Agent.get(__MODULE__, &Queue.member?(&1, item))
   end
@@ -26,10 +30,6 @@ defmodule Bday.QueueState do
     notify_change()
 
     item
-  end
-
-  def position(item) do
-    Agent.get(__MODULE__, fn queue -> Enum.find_index(queue, &(&1 == item)) end)
   end
 
   defp notify_change do

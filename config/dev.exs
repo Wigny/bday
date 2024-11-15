@@ -1,5 +1,7 @@
 import Config
 
+config :bday, :admin, "admin"
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #

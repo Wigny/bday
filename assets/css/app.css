@@ -3,10 +3,42 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
-
 @layer base {
+  html {
+    font-family: "BubbleGum", "Shark Soft Bites";
+  }
+
+  @font-face {
+    font-family: "Aristelle Sans";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/AristelleSans.ttf");
+  }
+
+  @font-face {
+    font-family: "BubbleGum";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/BubbleGum.ttf");
+  }
+
   @font-face {
     font-family: "Shark Soft Bites";
-    src: url("../font.ttf");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("../fonts/SharkSoftBites.ttf");
+  }
+}
+
+@layer utilities {
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hidden {
+    scrollbar-width: none;
   }
 }

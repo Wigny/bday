@@ -1,45 +1,47 @@
 defmodule BdayWeb.EnqueueLive do
   use BdayWeb, :live_view
 
+  alias Bday.QueueState
+
   on_mount {BdayWeb.UserLiveAuth, :ensure_authenticated}
 
   @impl true
   def render(assigns) do
     ~H"""
-    <h1 class="font-shark text-6xl text-[#693045]">Fila de espera</h1>
+    <div class="flex flex-col gap-4 mx-auto py-4 max-w-sm h-dvh container">
+      <h1 class="[text-shadow:_1px_4px_0px_#f8dcdd] text-4xl text-blossom text-center [-webkit-text-stroke:1px_#693045] uppercase">
+        Fila de espera
+      </h1>
+      <ul class="scrollbar-hidden h-full overflow-y-auto [counter-reset:user]">
+        <li :for={{dom_id, user} <- @streams.queue} id={dom_id} class="[counter-increment:user]">
+          <div
+            class="bg-mauve m-2 p-4 rounded-2xl aria-checked:outline outline-2 outline-mauve outline-offset-2"
+            aria-checked={to_string(user == @current_user)}
+          >
+            <h3 class="text-ivory"><%= user.name %></h3>
+            <p class="after:content-[counter(user)] text-blossom uppercase">
+              Posição
+            </p>
+          </div>
+        </li>
+      </ul>
 
-    <ul id="queue" phx-update="stream" class="grid grid-cols-1 gap-y-5 pb-40">
-      <li :for={{dom_id, user} <- @streams.queue} id={dom_id}>
-        <.guest_card
-          nickname={user.name}
-          index={Bday.QueueState.position(user) + 1}
-          is_my={Bday.QueueState.position(user) == @position}
-        />
-      </li>
-    </ul>
-
-    <div :if={is_nil(@position)} class="fixed bottom-0 left-0 bg-white w-full p-4 grid grid-cols-1">
-      <.button phx-click="join_list">Join list</.button>
+      <button
+        :if={@admin?}
+        class="border-2 border-mauve mx-2 px-12 py-1 rounded-full text-blossom uppercase"
+        phx-click="next"
+        disabled={@queue_length == 0}
+      >
+        Ir para o próximo
+      </button>
+      <button
+        :if={not @admin? and not @enqueued?}
+        class="border-2 border-mauve mx-2 px-12 py-1 rounded-full text-blossom uppercase"
+        phx-click="join"
+      >
+        Entrar na fila
+      </button>
     </div>
-    <%!-- <span :if={@position}>
-      You are the in the <%= @position + 1 %>º position
-    </span> --%>
-
-    <img
-      src={~p"/images/bandeirolas-rosinha.svg"}
-      alt=""
-      class="absolute -top-10 -right-5  w-3/4 blur-sm -z-10"
-    />
-    <img
-      src={~p"/images/bandeirolas-roxa.svg"}
-      alt=""
-      class="absolute top-32 -left-10  w-3/4 blur-sm -z-10"
-    />
-    <img
-      src={~p"/images/bandeirolas-rosinha.svg"}
-      alt=""
-      class="absolute top-2/3 -right-5 -left-0 blur-sm -z-10"
-    />
     """
   end
 
@@ -52,24 +54,33 @@ defmodule BdayWeb.EnqueueLive do
     {:ok,
      socket
      |> stream_configure(:queue, dom_id: &"user-#{&1.name}")
-     |> update_queue(Bday.QueueState.get())}
+     |> update_assigns()}
   end
 
   @impl true
-  def handle_event("join_list", _params, socket) do
-    user = socket.assigns.current_user
-    Bday.QueueState.push(user)
-    {:noreply, stream_insert(socket, :queue, user, limit: -10)}
+  def handle_event("next", _params, socket) do
+    Bday.QueueState.pop()
+    {:noreply, socket}
+  end
+
+  def handle_event("join", _params, socket) do
+    QueueState.push(socket.assigns.current_user)
+    {:noreply, socket}
   end
 
   @impl true
   def handle_info({:change, queue}, socket) do
-    {:noreply, update_queue(socket, queue)}
+    {:noreply, update_assigns(socket, queue)}
   end
 
-  defp update_queue(socket, queue) do
+  defp update_assigns(socket, queue \\ QueueState.get()) do
+    user = socket.assigns.current_user
+    admin = Application.fetch_env!(:bday, :admin)
+
     socket
-    |> stream(:queue, Enum.take(queue, 10), reset: true)
-    |> assign(:position, Enum.find_index(queue, &(&1 == socket.assigns.current_user)))
+    |> assign(:admin?, user.name == admin)
+    |> assign(:enqueued?, QueueState.member?(user))
+    |> assign(:queue_length, QueueState.length())
+    |> stream(:queue, queue, reset: true)
   end
 end

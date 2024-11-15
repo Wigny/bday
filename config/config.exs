@@ -21,7 +21,7 @@ config :bday, BdayWeb.Endpoint,
   pubsub_server: Bday.PubSub,
   live_view: [signing_salt: "8RXSOksQ"]
 
-# Configure esbuild (the version is required)
+# Configure bun (the version is required)
 config :bun,
   version: "1.1.33",
   bday: [

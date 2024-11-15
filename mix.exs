@@ -27,26 +27,21 @@ defmodule Bday.MixProject do
     [
       {:phoenix, "~> 1.7.14"},
       {:phoenix_html, "~> 4.1"},
-      {:phoenix_ecto, "~> 4.6"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.0.0-rc.7", override: true},
       {:floki, ">= 0.30.0", only: :test},
       {:bun, "~> 1.3", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:jason, "~> 1.2"},
-      {:bandit, "~> 1.5"},
-      {:ecto, "~> 3.12"}
+      {:bandit, "~> 1.5"}
     ]
   end
 
   defp aliases do
     [
-      setup: ["deps.get", "assets.setup", "assets.build"],
-      "assets.setup": [
-        "tailwind.install --if-missing",
-        "bun.install --if-missing",
-        "bun default install --cwd assets"
-      ],
+      setup: ["deps.get", "assets.setup", "assets.install", "assets.build"],
+      "assets.setup": ["tailwind.install --if-missing", "bun.install --if-missing"],
+      "assets.install": ["bun default install --cwd assets"],
       "assets.build": ["tailwind bday", "bun bday"],
       "assets.deploy": ["tailwind bday --minify", "bun bday --minify", "phx.digest"]
     ]

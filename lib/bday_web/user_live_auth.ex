@@ -4,16 +4,6 @@ defmodule BdayWeb.UserLiveAuth do
   import Phoenix.Component
   import Phoenix.LiveView
 
-  def on_mount(:ensure_admin, _params, _session, socket) do
-    peer_data = get_connect_info(socket, :peer_data)
-
-    if match?({127, 0, 0, 1}, peer_data.address) do
-      {:cont, socket}
-    else
-      {:halt, redirect(socket, to: ~p"/")}
-    end
-  end
-
   def on_mount(:ensure_authenticated, _params, %{"username" => username}, socket) do
     {:cont, assign_new(socket, :current_user, fn -> Bday.User.new(username) end)}
   end

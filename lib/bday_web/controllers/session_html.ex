@@ -3,39 +3,53 @@ defmodule BdayWeb.SessionHTML do
 
   def new(assigns) do
     ~H"""
-    <div class="h-full flex justify-center items-center flex-col relative">
-      <img src={~p"/images/bandeirolas-roxa.svg"} alt="" class="absolute -top-10 -left-10  w-3/4" />
-      <img src={~p"/images/bandeirolas-rosinha.svg"} alt="" class="absolute -top-10 -right-5  w-3/4" />
-
-      <div class="z-10">
-        <.header class="text-center font-shark uppercase text-3xl">
-          Faça login para participarda lista de espera ;)
-        </.header>
-
-        <.simple_form :let={f} for={@conn.params["user"]} as={:user} action={~p"/session"}>
-          <.input
-            field={f[:name]}
-            type="text"
-            autocomplete="name"
-            label="Name"
-            required
-            placeholder="Nickname"
-            class="font-shark"
-          />
-
-          <:actions>
-            <.button phx-disable-with="Logging in..." class="w-full">
-              Entrar
-            </.button>
-          </:actions>
-        </.simple_form>
+    <div class={[
+      "bg-[url('/images/cloud-pink.webp'),_url('/images/cloud-pink.webp'),_url('/images/cloud-white.webp')]",
+      "bg-[position:center_-340px,_center_450px,_center_130%]",
+      "bg-[length:1500px,_1500px,_1000px]",
+      "bg-no-repeat",
+      "px-4"
+    ]}>
+      <div class={[
+        "bg-[url('/images/ballon.svg'),_url('/images/cat.webp')]",
+        "bg-[position:left_15vh,_center_bottom]",
+        "bg-[length:_100px,_clamp(200px,_100%,_500px)]",
+        "bg-no-repeat",
+        "h-dvh overflow-hidden",
+        "mx-auto max-w-xl container"
+      ]}>
+        <div class="flex flex-col justify-center items-center gap-2 mt-[25vh]">
+          <h2 class="font-sans text-3xl text-blossom text-center uppercase">Bem-vindo</h2>
+          <h1 class="[text-shadow:_1px_4px_0px_#f8dcdd] text-6xl text-blossom text-center [-webkit-text-stroke:1px_#693045] uppercase">
+            Micha's Bday!
+          </h1>
+          <.form
+            :let={f}
+            for={@conn.params["user"]}
+            as={:user}
+            action={~p"/session"}
+            class="flex flex-col justify-center gap-4"
+          >
+            <input
+              id={f[:name].id}
+              name={f[:name].name}
+              type="text"
+              autocomplete="name"
+              required
+              placeholder="Nickname"
+              class="bg-mauve px-5 border-none rounded-full focus:ring-0 text-ivory placeholder:text-ivory uppercase"
+            />
+            <div class="flex justify-center">
+              <button
+                type="submit"
+                class="border-2 border-mauve px-12 py-1 rounded-full text-blossom uppercase"
+              >
+                Entrar
+              </button>
+            </div>
+          </.form>
+        </div>
       </div>
-
-      <img
-        src={~p"/images/baloes.svg"}
-        alt=""
-        class="fixed w-[1200px] max-w-none -bottom-40 left-1/2 -translate-x-1/2 -z-1"
-      />
     </div>
     """
   end

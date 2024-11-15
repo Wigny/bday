@@ -8,6 +8,8 @@ defmodule BdayWeb.SessionController do
   end
 
   def create(conn, %{"user" => %{"name" => username}}) do
+    # TODO: verify unique username
+
     conn
     |> put_session(:username, username)
     |> redirect(to: ~p"/")
