@@ -82,6 +82,8 @@ defmodule BdayWeb do
     quote do
       # HTML escaping functionality
       import Phoenix.HTML
+      # UI components
+      import BdayWeb.Components
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

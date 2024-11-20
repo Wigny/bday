@@ -1,7 +1,7 @@
 defmodule BdayWeb.EnqueueLive do
   use BdayWeb, :live_view
 
-  alias Bday.QueueState
+  alias Bday.{Queue, QueueState}
 
   on_mount {BdayWeb.UserLiveAuth, :ensure_authenticated}
 
@@ -9,9 +9,9 @@ defmodule BdayWeb.EnqueueLive do
   def render(assigns) do
     ~H"""
     <div class="flex flex-col gap-4 mx-auto py-4 max-w-sm h-dvh container">
-      <h1 class="[text-shadow:_1px_4px_0px_#f8dcdd] text-4xl text-blossom text-center [-webkit-text-stroke:1px_#693045] uppercase">
+      <.title>
         Fila de espera
-      </h1>
+      </.title>
       <ul class="scrollbar-hidden h-full overflow-y-auto [counter-reset:user]">
         <li :for={{dom_id, user} <- @streams.queue} id={dom_id} class="[counter-increment:user]">
           <div
@@ -26,21 +26,12 @@ defmodule BdayWeb.EnqueueLive do
         </li>
       </ul>
 
-      <button
-        :if={@admin?}
-        class="border-2 border-mauve mx-2 px-12 py-1 rounded-full text-blossom uppercase"
-        phx-click="next"
-        disabled={@queue_length == 0}
-      >
+      <.button :if={@user_admin?} phx-click="next" disabled={@queue_length == 0}>
         Ir para o próximo
-      </button>
-      <button
-        :if={not @admin? and not @enqueued?}
-        class="border-2 border-mauve mx-2 px-12 py-1 rounded-full text-blossom uppercase"
-        phx-click="join"
-      >
+      </.button>
+      <.button :if={not @user_admin? and not @user_enqueued?} phx-click="join">
         Entrar na fila
-      </button>
+      </.button>
     </div>
     """
   end
@@ -54,12 +45,12 @@ defmodule BdayWeb.EnqueueLive do
     {:ok,
      socket
      |> stream_configure(:queue, dom_id: &"user-#{&1.name}")
-     |> update_assigns()}
+     |> update_assigns(QueueState.get())}
   end
 
   @impl true
   def handle_event("next", _params, socket) do
-    Bday.QueueState.pop()
+    QueueState.pop()
     {:noreply, socket}
   end
 
@@ -73,14 +64,14 @@ defmodule BdayWeb.EnqueueLive do
     {:noreply, update_assigns(socket, queue)}
   end
 
-  defp update_assigns(socket, queue \\ QueueState.get()) do
+  defp update_assigns(socket, queue) do
     user = socket.assigns.current_user
     admin = Application.fetch_env!(:bday, :admin)
 
     socket
-    |> assign(:admin?, user.name == admin)
-    |> assign(:enqueued?, QueueState.member?(user))
-    |> assign(:queue_length, QueueState.length())
+    |> assign(:user_admin?, user.name == admin)
+    |> assign(:user_enqueued?, Queue.member?(queue, user))
+    |> assign(:queue_length, Queue.length(queue))
     |> stream(:queue, queue, reset: true)
   end
 end

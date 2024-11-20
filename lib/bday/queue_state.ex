@@ -10,29 +10,26 @@ defmodule Bday.QueueState do
     Agent.get(__MODULE__, & &1)
   end
 
-  def length do
-    Agent.get(__MODULE__, &Queue.length/1)
-  end
-
-  def member?(item) do
-    Agent.get(__MODULE__, &Queue.member?(&1, item))
-  end
-
   def push(item) do
-    :ok = Agent.update(__MODULE__, &Queue.push(&1, item))
-    notify_change()
-
-    :ok
+    Agent.update(__MODULE__, fn queue ->
+      queue = Queue.push(queue, item)
+      notify_change(queue)
+      queue
+    end)
   end
 
   def pop do
-    {:value, item} = Agent.get_and_update(__MODULE__, &Queue.pop/1)
-    notify_change()
+    {:value, item} =
+      Agent.get_and_update(__MODULE__, fn queue ->
+        {result, queue} = Queue.pop(queue)
+        notify_change(queue)
+        {result, queue}
+      end)
 
     item
   end
 
-  defp notify_change do
-    Phoenix.PubSub.broadcast!(Bday.PubSub, "queue", {:change, get()})
+  defp notify_change(queue) do
+    Phoenix.PubSub.broadcast!(Bday.PubSub, "queue", {:change, queue})
   end
 end
