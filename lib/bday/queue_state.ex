@@ -26,6 +26,15 @@ defmodule Bday.QueueState do
     end)
   end
 
+  def delete(item) do
+    Agent.update(__MODULE__, fn queue ->
+      queue = Queue.delete(queue, item)
+      persist(queue)
+      notify_change(queue)
+      queue
+    end)
+  end
+
   def pop do
     {:value, item} =
       Agent.get_and_update(__MODULE__, fn queue ->

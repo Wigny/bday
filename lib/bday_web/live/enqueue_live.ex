@@ -1,7 +1,7 @@
 defmodule BdayWeb.EnqueueLive do
   use BdayWeb, :live_view
 
-  alias Bday.{Queue, QueueState}
+  alias Bday.{Queue, QueueState, User}
 
   on_mount {BdayWeb.UserLiveAuth, :ensure_authenticated}
 
@@ -18,10 +18,30 @@ defmodule BdayWeb.EnqueueLive do
             class="bg-mauve m-2 p-4 rounded-2xl aria-checked:outline outline-2 outline-mauve outline-offset-2"
             aria-checked={to_string(user == @current_user)}
           >
-            <h3 class="text-ivory"><%= user.name %></h3>
-            <p class="after:content-[counter(user)] text-blossom uppercase">
-              Posição
-            </p>
+            <div class="flex justify-between">
+              <div>
+                <h3 class="text-ivory"><%= user.name %></h3>
+                <p class="after:content-[counter(user)] text-blossom uppercase">
+                  Posição
+                </p>
+              </div>
+              <button
+                :if={user == @current_user or @user_admin?}
+                phx-click="remove"
+                phx-value-username={user.name}
+              >
+                <svg
+                  viewBox="0 0 1024 1024"
+                  class="w-6 h-6 text-ivory"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path fill="currentColor" d="M352 480h320a32 32 0 110 64H352a32 32 0 010-64z" /><path
+                    fill="currentColor"
+                    d="M512 896a384 384 0 100-768 384 384 0 000 768zm0 64a448 448 0 110-896 448 448 0 010 896z"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </li>
       </ul>
@@ -56,6 +76,11 @@ defmodule BdayWeb.EnqueueLive do
 
   def handle_event("join", _params, socket) do
     QueueState.push(socket.assigns.current_user)
+    {:noreply, socket}
+  end
+
+  def handle_event("remove", %{"username" => username}, socket) do
+    QueueState.delete(User.new(username))
     {:noreply, socket}
   end
 

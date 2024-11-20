@@ -21,6 +21,10 @@ defmodule Bday.Queue do
     %{queue | value: :queue.in(item, q)}
   end
 
+  def delete(%__MODULE__{value: q} = queue, item) do
+    %{queue | value: :queue.delete(item, q)}
+  end
+
   def pop(%__MODULE__{value: q} = queue) do
     {result, q} = :queue.out(q)
     {result, %{queue | value: q}}
