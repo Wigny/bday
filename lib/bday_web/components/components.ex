@@ -3,7 +3,7 @@ defmodule BdayWeb.Components do
 
   def title(assigns) do
     ~H"""
-    <h1 class="[text-shadow:_1px_4px_0px_#f8dcdd] text-4xl text-blossom text-center [-webkit-text-stroke:1px_#693045] uppercase">
+    <h1 class="[text-shadow:_1px_4px_0px_var(--color-blush)] text-4xl text-blossom text-center [-webkit-text-stroke:1px_var(--color-mauve)] uppercase">
       <%= render_slot(@inner_block) %>
     </h1>
     """

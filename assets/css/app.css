@@ -1,44 +1,52 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss" source("../../lib/bday_web");
 
-/* This file is for your main application CSS */
-@layer base {
-  html {
-    font-family: "BubbleGum", "Shark Soft Bites";
-  }
+@plugin "@tailwindcss/forms";
 
-  @font-face {
-    font-family: "Aristelle Sans";
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url("../fonts/AristelleSans.ttf");
-  }
+@variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
+@variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
+@variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
 
-  @font-face {
-    font-family: "BubbleGum";
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url("../fonts/BubbleGum.ttf");
-  }
-
-  @font-face {
-    font-family: "Shark Soft Bites";
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url("../fonts/SharkSoftBites.ttf");
-  }
+html {
+  font-family: "BubbleGum", "Shark Soft Bites";
 }
 
-@layer utilities {
-  .scrollbar-hidden::-webkit-scrollbar {
+@font-face {
+  font-family: "Aristelle Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/AristelleSans.ttf");
+}
+
+@font-face {
+  font-family: "BubbleGum";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/BubbleGum.ttf");
+}
+
+@font-face {
+  font-family: "Shark Soft Bites";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/SharkSoftBites.ttf");
+}
+
+@theme {
+  --font-sans: "Aristelle Sans", "sans";
+
+  --color-ivory: #FFFAF0;
+  --color-blossom: #DE6693;
+  --color-mauve: #693045;
+  --color-blush: #F8DCDD;
+}
+
+@utility scrollbar-hidden {
+  &::-webkit-scrollbar {
     display: none;
   }
 
-  .scrollbar-hidden {
-    scrollbar-width: none;
-  }
+  scrollbar-width: none;
 }

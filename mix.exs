@@ -40,7 +40,7 @@ defmodule Bday.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "assets.setup", "assets.install", "assets.build"],
-      "assets.setup": ["tailwind.install --if-missing", "bun.install --if-missing"],
+      "assets.setup": ["tailwind.install --if-missing --no-assets", "bun.install --if-missing"],
       "assets.install": ["bun default install --cwd assets"],
       "assets.build": ["tailwind bday", "bun bday"],
       "assets.deploy": ["tailwind bday --minify", "bun bday --minify", "phx.digest"]
