@@ -6,6 +6,7 @@ defmodule Bday.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      {DNSCluster, query: Application.get_env(:bday, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Bday.PubSub},
       Bday.QueueState,
       BdayWeb.Endpoint

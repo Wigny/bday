@@ -33,14 +33,19 @@ defmodule Bday.MixProject do
       {:bun, "~> 1.3", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:jason, "~> 1.2"},
+      {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"}
     ]
   end
 
   defp aliases do
     [
-      setup: ["deps.get", "assets.setup", "assets.install", "assets.build"],
-      "assets.setup": ["tailwind.install --if-missing --no-assets", "bun.install --if-missing"],
+      setup: ["deps.get", "assets.setup", "assets.build"],
+      "assets.setup": [
+        "tailwind.install --if-missing --no-assets",
+        "bun.install --if-missing",
+        "assets.install"
+      ],
       "assets.install": ["bun default install --cwd assets"],
       "assets.build": ["tailwind bday", "bun bday"],
       "assets.deploy": ["tailwind bday --minify", "bun bday --minify", "phx.digest"]
