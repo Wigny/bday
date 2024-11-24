@@ -15,7 +15,7 @@ defmodule BdayWeb.EnqueueLive do
       <ul class="scrollbar-hidden h-full overflow-y-auto [counter-reset:user]">
         <li :for={{dom_id, user} <- @streams.queue} id={dom_id} class="[counter-increment:user]">
           <div
-            class="bg-mauve m-2 p-4 rounded-2xl aria-checked:outline outline-2 outline-mauve outline-offset-2"
+            class="bg-mauve m-2 p-4 rounded-2xl aria-checked:outline-2 outline-mauve outline-offset-2"
             aria-checked={to_string(user == @current_user)}
           >
             <div class="flex justify-between">
