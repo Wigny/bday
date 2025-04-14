@@ -1,53 +1,46 @@
 defmodule Bday.QueueState do
-  use Agent
+  use Task
   alias Bday.Queue
 
   def start_link(_args \\ []) do
-    Agent.start_link(&init/0, name: __MODULE__)
+    Task.start_link(&init/0)
   end
 
   defp init do
     {:ok, _table} =
       :dets.open_file(__MODULE__, file: ~c"/tmp/bday_queue", auto_save: to_timeout(second: 1))
 
-    retrieve()
-  end
-
-  def get do
-    Agent.get(__MODULE__, & &1)
+    Process.hibernate(Function, :identity, [nil])
   end
 
   def push(item) do
-    Agent.update(__MODULE__, fn queue ->
-      queue = Queue.push(queue, item)
-      persist(queue)
-      notify_change(queue)
-      queue
-    end)
+    queue = Queue.push(get(), item)
+
+    persist(queue)
+    notify_change(queue)
+
+    queue
   end
 
   def delete(item) do
-    Agent.update(__MODULE__, fn queue ->
-      queue = Queue.delete(queue, item)
-      persist(queue)
-      notify_change(queue)
-      queue
-    end)
+    queue = Queue.delete(get(), item)
+
+    persist(queue)
+    notify_change(queue)
+
+    queue
   end
 
   def pop do
-    {:value, item} =
-      Agent.get_and_update(__MODULE__, fn queue ->
-        {result, queue} = Queue.pop(queue)
-        persist(queue)
-        notify_change(queue)
-        {result, queue}
-      end)
+    {item, queue} = Queue.pop(get())
+
+    persist(queue)
+    notify_change(queue)
 
     item
   end
 
-  defp retrieve do
+  def get do
     case :dets.lookup(__MODULE__, :queue) do
       [{:queue, queue}] -> queue
       [] -> Queue.new()
@@ -55,7 +48,7 @@ defmodule Bday.QueueState do
   end
 
   defp persist(queue) do
-    :dets.insert(__MODULE__, {:queue, queue})
+    :ok = :dets.insert(__MODULE__, {:queue, queue})
   end
 
   defp notify_change(queue) do
